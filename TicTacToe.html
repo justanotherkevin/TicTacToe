@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title></title>
+
+	<style>
+		body {
+			background: black;
+			text-transform: uppercase;
+			color: black;
+			font-size: 2vh;
+			font-family: monospace;
+		}
+
+		#main {
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+		}
+
+		#board {
+			margin: auto;
+			width: 33vh;
+			height: 45vh;
+		}
+
+		#showAiBrain {
+			margin: 0.5vh;
+			padding: 0;
+			height: 5vh;
+			width: 32vh;
+			line-height: 5vh;
+			vertical-align: middle;
+			background: #fff;
+			text-align: center;
+			border-radius: 5px;
+			cursor: pointer;
+			float: left;
+		}
+
+		#winnerBox {
+			color: white;
+			text-align: center;
+		}
+
+		.square {
+			/*padding: 0;*/
+			margin: 0.5vh;
+			height: 10vh;
+			width: 10vh;
+			line-height: 10vh;
+			vertical-align: middle;
+			text-align: center;
+			font-size: 0;
+			border-radius: 20px;
+			background: #fff;
+			cursor: pointer;
+			float: left;
+      transition: background .55s ease-in-out;
+      -moz-transition: background .55s ease-in-out;
+      -webkit-transition: background .55s ease-in-out;
+		}
+
+		.button {
+			margin: 0.5vh;
+			padding: 0;
+			height: 5vh;
+			width: 15.5vh;
+			line-height: 5vh;
+			vertical-align: middle;
+			background: #fff;
+			text-align: center;
+			border-radius: 5px;
+			cursor: pointer;
+			float: left;
+		}
+	</style>
+
+
+	<script>
+		var squares = document.getElementsByClassName("square");
+		var state = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+		var gameOver = false;
+		var visible = false;
+		var human = false;
+		var computer = true;
+		var humanValue = -1;
+		var compValue = 1;
+		var currentPlayer = human;
+		var winCombo = [
+			[0, 1, 2],
+			[3, 4, 5],
+			[6, 7, 8],
+			[0, 3, 6],
+			[1, 4, 7],
+			[2, 5, 8],
+			[0, 4, 8],
+			[2, 4, 6]
+		];
+
+		function reset() {
+			for (var x = 0; x < 9; x++) {
+				squares[x].style.background = "#fff";
+				squares[x].style.borderRadius = "20px";
+				squares[x].innerText = "";
+				state[x] = 0;
+			}
+			document.getElementById("winnerBox").style.visibility = "hidden";
+			gameOver = false;
+			currentPlayer = human;
+		}
+
+		function showAiBrain() {
+			for (var x = 0; x < 9; x++)
+				squares[x].style.fontSize = visible ? "0px" : "1.5vh";
+			document.getElementById("showAiBrain").innerText = visible ? "Show Values" : "Hide Values";
+			visible = !visible;
+		}
+
+		function claim(clicked) {
+			if (gameOver)
+				return;
+			for (var x = 0; x < 9; x++) {
+				if (squares[x] == clicked && state[x] == 0) {
+					set(x, currentPlayer);
+				}
+			}
+		}
+
+    function findWinner () {
+      var winner = null;
+      if (checkWin(state, human)) {
+        winner = "Blue";
+      } else if (checkWin(state, computer)) {
+        winner = "Red";
+      } else {
+        winner = "No Winner";
+      }
+      return winner;
+    }
+
+		function set(index, player) {
+			if (gameOver)
+				return;
+			if (state[index] == 0) {
+				squares[index].style.background = player == human ? "rgb(16, 108, 193)" : "rgb(224, 84, 84)";
+				squares[index].style.borderRadius = "100%";
+				state[index] = player == human ? humanValue : compValue;
+				currentPlayer = !currentPlayer;
+				aiTurn(state, 0, currentPlayer, false);
+				if (checkWin(state, player) || checkBoardFull(state)) {
+					for (var x = 0; x < 9; x++)
+						squares[x].innerText = "";
+					gameOver = true;
+          if(findWinner() == "Red" || findWinner() == "Blue"){
+            document.getElementById("winnerBox").style.visibility = "";
+            document.getElementById("winnerBox").innerText = findWinner() + " is the winner!";
+          } else {
+            document.getElementById("winnerBox").style.visibility = "";
+            document.getElementById("winnerBox").innerText = "Its a Draw!";
+          }
+				}
+			}
+		}
+
+		function checkWin(board, player) {
+			var value = player == human ? humanValue : compValue;
+			for (var y = 0; y < 8; y++) {
+				var win = true;
+				if (value === board[winCombo[y][0]] &&
+					board[winCombo[y][0]] === board[winCombo[y][1]] &&
+					board[winCombo[y][1]] === board[winCombo[y][2]]) {
+					return true;
+					break;
+				}
+			}
+			return false;
+		}
+
+		function checkBoardFull(board) {
+			for (var x = 0; x < 9; x++)
+				if (board[x] == 0) {
+					return false;
+				}
+			return true;
+		}
+
+		function aiTurn(board, depth, player, turn) {
+			if (checkWin(board, !player))
+				return -10 + depth;
+			if (checkBoardFull(board))
+				return 0;
+			var value = player == human ? humanValue : compValue;
+			var max = -Infinity;
+			var index = 0;
+			for (var x = 0; x < 9; x++) {
+				if (depth == 0)
+					squares[x].innerText = "";
+				if (board[x] == 0) {
+					var newBoard = board.slice();
+					newBoard[x] = value;
+					var moveValue = -aiTurn(newBoard, depth + 1, !player, false);
+					if (depth == 0)
+						squares[x].innerText = moveValue;
+					if (moveValue > max) {
+						max = moveValue;
+						index = x;
+					}
+				}
+			}
+			if (turn)
+				set(index, player)
+			return max;
+		}
+	</script>
+</head>
+
+<body>
+
+	<p id="message">My first time making a game with an AI.</p>
+	<div id="main">
+		<div id="board">
+			<div id="winnerBox" style="visibility: hidden">you win!</div>
+			<div id="showAiBrain" onclick="showAiBrain()">Show Value</div>
+			<div class="square" onclick="claim(this)"></div>
+			<div class="square" onclick="claim(this)"></div>
+			<div class="square" onclick="claim(this)"></div>
+			<div class="square" onclick="claim(this)"></div>
+			<div class="square" onclick="claim(this)"></div>
+			<div class="square" onclick="claim(this)"></div>
+			<div class="square" onclick="claim(this)"></div>
+			<div class="square" onclick="claim(this)"></div>
+			<div class="square" onclick="claim(this)"></div>
+			<div class="button" onclick="aiTurn(state, 0, currentPlayer, true)">Computer</div>
+			<div class="button" onclick="reset()">Reset</div>
+		</div>
+	</div>
+
+
+</body>
+
+</html>
