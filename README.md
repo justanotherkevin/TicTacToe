@@ -5,5 +5,5 @@
 >Download the file and open it with a browser.
 
 **How to play**
->Just click on any of the squares!
+>Just click on any squares!
 >Or... you can let the AI pick the next best move.
