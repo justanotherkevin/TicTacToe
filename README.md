@@ -1,6 +1,6 @@
 # TTT-with-minimax
 >Tic Tac Toe with minimax algorithm  
-![alt text](https://github.com/polymer940c/TTT-with-minimax/blob/master/TTT.gif"Demo TTT")  
+![alt text](https://github.com/polymer940c/TTT-with-minimax/blob/master/TTT.gif "Demo TTT")  
 
 **How to open**
 >Download the file and open it with a browser.
