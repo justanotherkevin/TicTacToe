@@ -156,11 +156,10 @@
 					for (var x = 0; x < 9; x++)
 						squares[x].innerText = "";
 					gameOver = true;
+					document.getElementById("winnerBox").style.visibility = "";
           if(findWinner() == "Red" || findWinner() == "Blue"){
-            document.getElementById("winnerBox").style.visibility = "";
             document.getElementById("winnerBox").innerText = findWinner() + " is the winner!";
           } else {
-            document.getElementById("winnerBox").style.visibility = "";
             document.getElementById("winnerBox").innerText = "Its a Draw!";
           }
 				}
@@ -170,12 +169,10 @@
 		function checkWin(board, player) {
 			var value = player == human ? humanValue : compValue;
 			for (var y = 0; y < 8; y++) {
-				var win = true;
 				if (value === board[winCombo[y][0]] &&
 					board[winCombo[y][0]] === board[winCombo[y][1]] &&
 					board[winCombo[y][1]] === board[winCombo[y][2]]) {
 					return true;
-					break;
 				}
 			}
 			return false;
@@ -190,20 +187,27 @@
 		}
 
 		function aiTurn(board, depth, player, turn) {
+			// basecase
 			if (checkWin(board, !player))
 				return -10 + depth;
 			if (checkBoardFull(board))
 				return 0;
+			// switch between checking for player and AI
+			// retrun the max value and the index of that position
 			var value = player == human ? humanValue : compValue;
 			var max = -Infinity;
 			var index = 0;
+
 			for (var x = 0; x < 9; x++) {
-				if (depth == 0)
-					squares[x].innerText = "";
+				// if (depth == 0)
+				// squares[x].innerText = "";
+
+				// using a new board to test for value
 				if (board[x] == 0) {
 					var newBoard = board.slice();
 					newBoard[x] = value;
 					var moveValue = -aiTurn(newBoard, depth + 1, !player, false);
+					
 					if (depth == 0)
 						squares[x].innerText = moveValue;
 					if (moveValue > max) {
