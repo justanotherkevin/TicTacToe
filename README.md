@@ -15,4 +15,4 @@ I hope that by see the source code for this game, it will shine some insight to 
 
 **How to play**
 >Just click on any squares!
->Or... you can let the AI pick the next best move.
+>Or... you can let the computer pick the next best move.
