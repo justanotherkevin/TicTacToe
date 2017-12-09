@@ -1,5 +1,5 @@
 # TTT-with-minimax
->Tic Tac Toe with minimax algorithm  
+>Tic Tac Toe with minimax algorithm. [Play it here](https://polymer940c.github.io/TicTacToe/)
 ![alt text](https://github.com/polymer940c/TTT-with-minimax/blob/master/TTT.gif "Demo TTT")  
 
 I recently was request to make an unbeatable game of tic tac toe. It was a fun and very humbling project that taught me a ton. If you want to give it a shot, just follow the instruction below.  
